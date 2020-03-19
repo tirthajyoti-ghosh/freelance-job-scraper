@@ -8,8 +8,8 @@ skills = skills_raw.split(' ').join("/skill/")
 puts "Doing the hard work for you..."
 
 search_url = "https://www.guru.com/d/jobs/skill/#{skills}"
-# puts search_url
-unparsed_page = HTTParty.get(search_url).body
+uri = URI.parse(URI.encode(search_url.strip))
+unparsed_page = HTTParty.get(uri).body
 parsed_page = Nokogiri::HTML(unparsed_page)
 
 job_listings = parsed_page.css('div.record__details')
@@ -25,10 +25,11 @@ puts "Found #{last_page} pages"
 
 while page <= last_page
   pagination_url = search_url + "/pg/#{page}"
+  pagination_uri = URI.parse(URI.encode(pagination_url.strip))
 
   puts "Scraping page #{page}"
 
-  pagination_unparsed_page = HTTParty.get(pagination_url).body
+  pagination_unparsed_page = HTTParty.get(pagination_uri).body
   pagination_parsed_page = Nokogiri::HTML(pagination_unparsed_page)
 
   pagination_job_listings = pagination_parsed_page.css('div.record__details')

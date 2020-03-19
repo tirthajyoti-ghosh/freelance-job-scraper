@@ -7,6 +7,8 @@ keywords = gets.chomp
 puts "Doing the hard work for you..."
 
 search_url = "https://www.freelancer.com/jobs/?keyword=#{keywords}"
+uri = URI.parse(URI.encode(search_url.strip))
+unparsed_page = HTTParty.get(uri).body
 unparsed_page = HTTParty.get(search_url).body
 parsed_page = Nokogiri::HTML(unparsed_page)
 
@@ -23,10 +25,10 @@ puts "Found #{last_page} pages"
 
 while page <= last_page
   pagination_url = "https://www.freelancer.com/jobs/#{page}/?keyword=#{keywords}"
-
+  pagination_uri = URI.parse(URI.encode(pagination_url.strip))
   puts "Scraping page #{page}"
 
-  pagination_unparsed_page = HTTParty.get(pagination_url).body
+  pagination_unparsed_page = HTTParty.get(pagination_uri).body
   pagination_parsed_page = Nokogiri::HTML(pagination_unparsed_page)
 
   pagination_job_listings = pagination_parsed_page.css('div.JobSearchCard-item')
@@ -57,4 +59,4 @@ CSV.open("csv/freelancer.com-jobs.csv", "wb") do |row|
   end
 end
 
-puts "Found #{total} jobs with your keywords."
+puts "Found #{jobs.count} jobs with your keywords."
