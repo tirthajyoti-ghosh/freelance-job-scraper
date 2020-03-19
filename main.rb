@@ -19,19 +19,29 @@ per_page = job_listings.count
 total = parsed_page.css('span#total-results').text.to_i
 last_page = (total.to_f / per_page.to_f).ceil.to_i
 
+puts "Found #{last_page} pages"
+
 while page <= last_page
   pagination_url = "https://www.freelancer.com/jobs/#{page}/?keyword=#{keywords}"
-  puts "Current url: #{pagination_url}"
+
+  puts "Scraping page #{page}"
+
   pagination_unparsed_page = HTTParty.get(pagination_url).body
   pagination_parsed_page = Nokogiri::HTML(pagination_unparsed_page)
 
   pagination_job_listings = pagination_parsed_page.css('div.JobSearchCard-item')
 
   pagination_job_listings.each do |job_listing|
+    tags = []
+    tags_text = job_listing.css('a.JobSearchCard-primary-tagsLink')
+    tags_text.each do |tag|
+      tags << tag.text
+    end
     job = {
       title: job_listing.css('a.JobSearchCard-primary-heading-link').text.strip.gsub(/\\n/, " "),
       rate: job_listing.css('div.JobSearchCard-secondary-price').text.delete(" ").delete("\n").delete("Avg Bid"),
       desc: job_listing.css('p.JobSearchCard-primary-description').text.strip,
+      tags: tags.join(", "),
       url: "https://www.freelancer.com" + job_listing.css('a.JobSearchCard-primary-heading-link')[0].attributes["href"].value
     }
   
@@ -47,4 +57,4 @@ CSV.open("test.csv", "wb") do |row|
   end
 end
 
-puts "Found #{last_page} pages containing #{total} jobs with your keywords."
+puts "Found #{total} jobs with your keywords."
