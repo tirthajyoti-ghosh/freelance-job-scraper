@@ -2,21 +2,17 @@ require 'nokogiri'
 require 'httparty'
 require 'csv'
 
-# puts "Search jobs by skills in guru.com. Input skills separated by space(' '):"
-# skills_raw = gets.chomp
-# skills = skills_raw.split(' ').join("/skill/")
-# puts "Doing the hard work for you..."
+puts "Search jobs by skills in guru.com. Input skills separated by space(' '):"
+skills_raw = gets.chomp
+skills = skills_raw.split(' ').join("/skill/")
+puts "Doing the hard work for you..."
 
-search_url = "https://www.guru.com/d/jobs/skill/html/skill/css/skill/js/"
-
+search_url = "https://www.guru.com/d/jobs/skill/#{skills}"
+# puts search_url
 unparsed_page = HTTParty.get(search_url).body
 parsed_page = Nokogiri::HTML(unparsed_page)
 
 job_listings = parsed_page.css('div.record__details')
-
-budget_raw = job_listings[1].css('div.jobRecord__budget').css('span.dropdown').remove
-
-budget = budget_raw.text.strip
 
 jobs = Array.new
 
@@ -44,11 +40,17 @@ while page <= last_page
       tags << tag.text.strip
     end
 
+    budget_array = []
+    job_listing.css('div.jobRecord__budget').css('strong').each do |budget|
+      budget_array << budget.text.strip
+    end
+
     job = {
       title: job_listing.css('h2.jobRecord__title').text.strip,
       posted_by: job_listing.css('div.module_avatar').css('h3.identityName').text.strip,
       posted: job_listing.css('div.jobRecord__meta').css('strong')[0].text,
       send_before: job_listing.css('div.record__header__action').css('strong').text.strip,
+      budget: budget_array.join(" , "),
       desc: job_listing.css('p.jobRecord__desc').text.strip,
       tags: tags.join(", "),
       url: "https://www.guru.com" + job_listing.css('h2.jobRecord__title').css('a')[0].attributes["href"].value
@@ -59,11 +61,11 @@ while page <= last_page
   page += 1
 end
 
-CSV.open("freelancer.com-jobs.csv", "wb") do |row|
+CSV.open("csv/guru.com-jobs.csv", "wb") do |row|
   row << jobs.first.keys
   jobs.each do |job|
     row << job.values
   end
 end
 
-puts "Found #{total} jobs with your keywords."
+puts "Found #{jobs.count} jobs with your keywords."
