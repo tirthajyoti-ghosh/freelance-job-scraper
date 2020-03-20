@@ -9,7 +9,6 @@ puts "Doing the hard work for you..."
 search_url = "https://www.freelancer.com/jobs/?keyword=#{keywords}"
 uri = URI.parse(URI.encode(search_url.strip))
 unparsed_page = HTTParty.get(uri).body
-unparsed_page = HTTParty.get(search_url).body
 parsed_page = Nokogiri::HTML(unparsed_page)
 
 jobs = Array.new
