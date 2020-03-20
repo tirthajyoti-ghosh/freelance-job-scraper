@@ -1,6 +1,5 @@
 require 'nokogiri'
 require 'httparty'
-require 'uri'
 
 class Scraper
   def initialize(keywords, site)
@@ -11,9 +10,10 @@ class Scraper
 
   def scrape
     page = 1
-    last_page = last_page(@site, parse_html(parse_url(make_url(@site, 1))))
+    last_page = last_page(@site, parse_html(make_url(@site, 1)))
+    return "no job found" if last_page.zero?
     while page <= last_page
-      parsed_html = parse_html(parse_url(make_url(@site, page)))
+      parsed_html = parse_html(make_url(@site, page))
 
       case @site
       when "freelancer"
@@ -31,11 +31,11 @@ class Scraper
   end
   
   private
-  def parse_keywords(site)
-    if site == "freelancer" || site == "peopleperhour"
-      search_query = @keywords.join(' ')
+  def parse_keywords
+    @keywords.map! { |keyword| keyword.gsub(' ', '-') }
+    if @site == "freelancer" || @site == "peopleperhour"
+      search_query = @keywords.join('%20')
     else
-      @keywords.map! { |keyword| keyword.gsub(" ", "-") }
       search_query = @keywords.join("/skill/")
     end
     search_query
@@ -44,22 +44,17 @@ class Scraper
   def make_url(site, page)
     case site
     when "freelancer"
-      search_url = "https://www.freelancer.com/jobs/#{page}/?keyword=#{parse_keywords(site)}"
+      search_url = "https://www.freelancer.com/jobs/#{page}/?keyword=#{parse_keywords}"
     when "guru"
-      search_url = "https://www.guru.com/d/jobs/skill/#{parse_keywords(site)}/pg/#{page}"
+      search_url = "https://www.guru.com/d/jobs/skill/#{parse_keywords}/pg/#{page}"
     else
-      search_url = "https://www.peopleperhour.com/freelance-#{parse_keywords(site)}-jobs?page=#{page}"
+      search_url = "https://www.peopleperhour.com/freelance-#{parse_keywords}-jobs?page=#{page}"
     end
     search_url
   end
 
-  def parse_url(url)
-    uri = URI.parse(URI.encode(url.strip))
-    uri
-  end
-
-  def parse_html(parsed_uri)
-    unparsed_page = HTTParty.get(parsed_uri).body
+  def parse_html(url)
+    unparsed_page = HTTParty.get(url).body
     parsed_page = Nokogiri::HTML(unparsed_page)
     parsed_page
   end
@@ -77,6 +72,8 @@ class Scraper
       total = parsed_page.css('span#job-listing-count').text.split(' ')[0].to_i
     end
     
+    return 0 if job_listings.count.zero?
+
     per_page = job_listings.count
     last_page = (total.to_f / per_page.to_f).ceil.to_i
     last_page

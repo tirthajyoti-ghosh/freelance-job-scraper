@@ -16,6 +16,6 @@ freelancer = Scraper.new(keywords, "freelancer")
 guru = Scraper.new(keywords, "guru")
 peopleperhour = Scraper.new(keywords, "peopleperhour")
 
-puts "freelancer.com -> [#{freelancer.scrape}]"
-puts "peopleperhour.com -> [#{peopleperhour.scrape}]"
-puts "guru.com -> [#{guru.scrape}]"
+puts "freelancer.com -> #{freelancer.scrape}"
+puts "guru.com -> #{guru.scrape}"
+puts "peopleperhour.com -> #{peopleperhour.scrape}"
