@@ -1,36 +1,61 @@
 require 'nokogiri'
 require 'httparty'
+require 'uri'
 
 class Scraper
-  def initialize(keywords)
+  def initialize(keywords, site)
     @keywords = keywords
+    @site = site
     @jobs = Array.new
   end
 
   def scrape
-    parse_keywords
-    make_url(1) # takes page number as parameter
-    parse_url
+    page = 1
+    last_page = last_page(@site, parse_html(parse_url(make_url(@site, 1))))
+    while page <= last_page
+      parsed_html = parse_html(parse_url(make_url(@site, page)))
 
+      case @site
+      when "freelancer"
+        scrape_freelancer(parsed_html)
+      when "guru"
+        scrape_guru(parsed_html)
+      else
+        scrape_peopleperhour(parsed_html)
+      end
+
+      page += 1
+    end
+
+    @jobs.count
   end
   
   private
-  def parse_keywords
-    @freelancer_keywords = @keywords.join(' ')
-    @peopleperhour_keywords = @keywords.join(' ')
-    @guru_keywords = @keywords.join("/skill/")
+  def parse_keywords(site)
+    if site == "freelancer" || site == "peopleperhour"
+      search_query = @keywords.join(' ')
+    else
+      @keywords.map! { |keyword| keyword.gsub(" ", "-") }
+      search_query = @keywords.join("/skill/")
+    end
+    search_query
   end
 
-  def make_url(page)
-    @freelancer_url = "https://www.freelancer.com/jobs/#{page}/?keyword=#{@freelancer_keywords}"
-    @guru_url = "https://www.guru.com/d/jobs/skill/#{guru_keywords}/pg/#{page}"
-    @peopleperhour_url = "https://www.peopleperhour.com/freelance-#{peopleperhour_keywords}-jobs?page=#{page}"
+  def make_url(site, page)
+    case site
+    when "freelancer"
+      search_url = "https://www.freelancer.com/jobs/#{page}/?keyword=#{parse_keywords(site)}"
+    when "guru"
+      search_url = "https://www.guru.com/d/jobs/skill/#{parse_keywords(site)}/pg/#{page}"
+    else
+      search_url = "https://www.peopleperhour.com/freelance-#{parse_keywords(site)}-jobs?page=#{page}"
+    end
+    search_url
   end
 
-  def parse_url
-    @freelancer_uri = URI.parse(URI.encode(@freelancer_url.strip))
-    @guru_uri = URI.parse(URI.encode(@guru_url.strip))
-    @peopleperhour_uri = URI.parse(URI.encode(@peopleperhour_url.strip))
+  def parse_url(url)
+    uri = URI.parse(URI.encode(url.strip))
+    uri
   end
 
   def parse_html(parsed_uri)
@@ -39,24 +64,97 @@ class Scraper
     parsed_page
   end
 
-  def last_page
-    job_listings = parsed_page.css('div.JobSearchCard-item')
-
-    page = 1
-    per_page = job_listings.count
-    total = parsed_page.css('span#total-results').text.to_i
-    last_page = (total.to_f / per_page.to_f).ceil.to_i
-  end
-
-  def scrape_freelancer
-
-  end
-
-  def scrape_guru
-
-  end
-
-  def scrape_peopleperhour
+  def last_page(site, parsed_page)
+    case site
+    when "freelancer"
+      job_listings = parsed_page.css('div.JobSearchCard-item')
+      total = parsed_page.css('span#total-results').text.to_i
+    when "guru"
+      job_listings = parsed_page.css('div.jobRecord')
+      total = parsed_page.css('h2.secondaryHeading').text.split(' ')[0].to_i
+    else
+      job_listings = parsed_page.css('div.job-items')[0].css('div.job-list-item')
+      total = parsed_page.css('span#job-listing-count').text.split(' ')[0].to_i
+    end
     
+    per_page = job_listings.count
+    last_page = (total.to_f / per_page.to_f).ceil.to_i
+    last_page
+  end
+
+  def scrape_freelancer(parsed_html)
+    job_listings = parsed_html.css('div.JobSearchCard-item')
+
+    job_listings.each do |job_listing|
+      tags = []
+      tags_text = job_listing.css('a.JobSearchCard-primary-tagsLink')
+      tags_text.each do |tag|
+        tags << tag.text
+      end
+      job = {
+        title: job_listing.css('a.JobSearchCard-primary-heading-link').text.strip.gsub(/\\n/, " "),
+        rate: job_listing.css('div.JobSearchCard-secondary-price').text.delete(" ").delete("\n").delete("Avg Bid"),
+        desc: job_listing.css('p.JobSearchCard-primary-description').text.strip,
+        tags: tags.join(", "),
+        url: "https://www.freelancer.com" + job_listing.css('a.JobSearchCard-primary-heading-link')[0].attributes["href"].value
+      }
+    
+      @jobs << job
+    end
+
+    @jobs
+  end
+
+  def scrape_guru(parsed_html)
+    job_listings = parsed_html.css('div.record__details')
+
+    job_listings.each do |job_listing|
+      tags = []
+      tags_text = job_listing.css('a.skillsList__skill')
+      tags_text.each do |tag|
+        tags << tag.text.strip
+      end
+  
+      budget_array = []
+      job_listing.css('div.jobRecord__budget').css('strong').each do |budget|
+        budget_array << budget.text.strip
+      end
+  
+      job = {
+        title: job_listing.css('h2.jobRecord__title').text.strip,
+        posted_by: job_listing.css('div.module_avatar').css('h3.identityName').text.strip,
+        posted: job_listing.css('div.jobRecord__meta').css('strong')[0].text,
+        send_before: job_listing.css('div.record__header__action').css('strong').text.strip,
+        budget: budget_array.join(" , "),
+        desc: job_listing.css('p.jobRecord__desc').text.strip,
+        tags: tags.join(", "),
+        url: "https://www.guru.com" + job_listing.css('h2.jobRecord__title').css('a')[0].attributes["href"].value
+      }
+    
+      @jobs << job
+    end
+
+    @jobs
+  end
+
+  def scrape_peopleperhour(parsed_html)
+    job_listings = parsed_html.css('div.job-items')[0].css('div.job-list-item')
+
+    job_listings.each do |job_listing|
+      rate = job_listing.css('div.price-tag')
+      rate.css('small').remove
+      rate = rate.text.strip
+      job = {
+        title: job_listing.css('h6.title').css('a').text.strip,
+        posted: job_listing.css('time.value').text.strip,
+        rate: rate,
+        proposals: job_listing.css('span.proposal-count').text,
+        url: job_listing.css('h6.title').css('a')[0].attributes["href"].value
+      }
+    
+      @jobs << job
+    end
+
+    @jobs
   end
 end

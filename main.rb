@@ -12,7 +12,10 @@ loop do
   keywords << input.chomp
 end
 
-scraper = Scraper.new(keywords)
+freelancer = Scraper.new(keywords, "freelancer")
+guru = Scraper.new(keywords, "guru")
+peopleperhour = Scraper.new(keywords, "peopleperhour")
 
-scraper.scrape
-
+puts "freelancer.com -> [#{freelancer.scrape}]"
+puts "peopleperhour.com -> [#{peopleperhour.scrape}]"
+puts "guru.com -> [#{guru.scrape}]"
