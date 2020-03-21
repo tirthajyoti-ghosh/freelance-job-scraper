@@ -73,13 +73,13 @@ class Scraper
     case site
     when "freelancer"
       job_listings = parsed_page.css('div.JobSearchCard-item')
-      total = parsed_page.css('span#total-results').text.to_i
+      total = parsed_page.css('span#total-results').text.gsub(",", "").to_i
     when "guru"
       job_listings = parsed_page.css('div.jobRecord')
-      total = parsed_page.css('h2.secondaryHeading').text.split(' ')[0].to_i
+      total = parsed_page.css('h2.secondaryHeading').text.split(' ')[0].gsub(",", "").to_i
     else
       job_listings = parsed_page.css('div.job-items')[0].css('div.job-list-item')
-      total = parsed_page.css('span#job-listing-count').text.split(' ')[0].to_i
+      total = parsed_page.css('span#job-listing-count').text.split(' ')[0].gsub(",", "").to_i
     end
     
     return 0 if job_listings.count.zero?

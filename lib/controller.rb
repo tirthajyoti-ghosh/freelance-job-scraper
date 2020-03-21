@@ -18,9 +18,9 @@ class Controller
   def run
     rule
     input
-    sleep(2)
     init_scrape_object
     init_scraper
+    sleep(2)
     begin_scraping
     puts "Scraping complete!"
     sleep(1)
@@ -30,7 +30,7 @@ class Controller
     begin_exportation
     puts"Exportation complete!"
     sleep(1)
-    puts "You will find 3 csv files in current directory with the exported data."
+    puts "You will find 3 csv files in current working directory with the exported data."
     sleep(1)
     puts "Terminating..."
     sleep(2)
