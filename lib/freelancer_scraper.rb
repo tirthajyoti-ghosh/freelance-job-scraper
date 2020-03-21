@@ -51,7 +51,7 @@ while page <= last_page
   page += 1
 end
 
-CSV.open("csv/freelancer.com-jobs.csv", "wb") do |row|
+CSV.open("freelancer.com-jobs.csv", "wb") do |row|
   row << jobs.first.keys
   jobs.each do |job|
     row << job.values
