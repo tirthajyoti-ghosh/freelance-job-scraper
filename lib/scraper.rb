@@ -9,7 +9,7 @@ class Scraper
   end
 
   def scrape
-    puts "Now scraping #{@site}.com..."
+    puts "Scraping #{@site}.com..."
     puts
 
     page = 1
