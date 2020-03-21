@@ -22,7 +22,17 @@ class Controller
     init_scraper
     sleep(2)
     begin_scraping
-    puts "Scraping complete!"
+
+    puts "no job found in freelancing.com" if @scrape_freelancer == "no job found"
+    puts "no job found in guru.com" if @scrape_guru == "no job found"
+    puts "no job found in peopleperhour.com" if @scrape_peopleperhour == "no job found"
+
+    if @scrape_freelancer == "no job found" && @scrape_guru == "no job found" && @scrape_peopleperhour == "no job found"
+      return puts "No job found with the given keywords."
+    else
+      puts "Scraping complete!"
+    end
+    
     sleep(1)
     puts "Exporting to CSV..."
     init_exporter_object
@@ -86,9 +96,9 @@ MLS
   end
 
   def begin_exportation
-    @export_freelancer.export
-    @export_guru.export
-    @export_peopleperhour.export
+    @export_freelancer.export unless @scrape_freelancer == "no job found"
+    @export_guru.export unless @scrape_guru == "no job found"
+    @export_peopleperhour.export unless @scrape_peopleperhour == "no job found"
   end
 end
 
