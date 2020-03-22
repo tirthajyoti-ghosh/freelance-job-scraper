@@ -7,7 +7,7 @@ class CSVExporter
   end
 
   def export
-    CSV.open("#{@site}.com-jobs.csv", "wb") do |row|
+    CSV.open("#{@site}.com-jobs.csv", 'wb') do |row|
       row << @jobs.first.keys
       @jobs.each do |job|
         row << job.values
