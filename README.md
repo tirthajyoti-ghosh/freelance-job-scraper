@@ -33,7 +33,7 @@ This web scraper is a freelance job scraper that scrapes freelance jobs from the
 2) Run `bundle install` in command line to install Nokogiri and HTTParty Gem.
 3) Run `bin/main.rb`.
 4) Input keywords in separate lines. Press enter key on a new line to begim the search.
-5) Tada! 'freelance.com-jobs.csv', 'guru.com-jobs.csv', or 'peopleperhour.com-jobs.csv' would be created at the root directory respectively :)
+5) Tada! 'freelance.com-jobs.csv', 'guru.com-jobs.csv', and 'peopleperhour.com-jobs.csv' would be created at the root directory respectively :)
 
 ## Run tests
 
