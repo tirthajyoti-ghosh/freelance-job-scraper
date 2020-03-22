@@ -62,5 +62,5 @@ puts "Exportation complete!\n\n"
 sleep(1)
 puts "You will find 3 csv files in current working directory with the exported data.\n\n\n"
 sleep(1)
-puts "Terminating..."
+puts 'Terminating...'
 sleep(2)
