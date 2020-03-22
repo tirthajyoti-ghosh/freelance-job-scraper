@@ -2,7 +2,7 @@
 
 > Ruby Capstone Project of Microverse, which students have to complete a real-world-like project within 72 hours according to [this project specifications](https://www.notion.so/microverse/Build-your-own-scraper-f54eaca54d8a4d758a5f0141468127a8)
 
-This web scraper is a freelance job scraper that scrapes freelance jobs from these three websites: `freelancer.com`, `guru.com`, `peopleperhour.com` with keywords taken from the user input.
+This web scraper is a freelance job scraper that scrapes freelance jobs from these three websites: `freelancer.com`, `guru.com`, `peopleperhour.com` with keywords taken from the user input and exports them to 3 separate CSV files.
 
 ![demo-image](https://user-images.githubusercontent.com/57726348/77246333-4b02a400-6c4c-11ea-89e1-5a32c81321b9.png)
 
@@ -26,6 +26,9 @@ This web scraper is a freelance job scraper that scrapes freelance jobs from the
     └── csv_exporter_spec.rb
     └── spec_helper.rb
 ```
+## Video Presentation
+
+Feel free to check out this [link](https://www.loom.com/share/7e4744e6ccd84860858f4be44fc3f212) for a 5min video walkthrough :)
 
 ## Deployment
 
