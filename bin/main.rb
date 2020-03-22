@@ -9,7 +9,7 @@ puts <<-MLS
     /_/ /_/  \\__/\\__/_/\\_,_/_//_/\\__/\\__/  \\___/\\___/_.__/ /___/\\__/_/  \\_,_/ .__/\\__/_/   
                                                                            /_/             
     
-Enter keywords to search jobs in these sites: freelance.com, guru.com, peopleperhour.com
+Enter keywords to search jobs in these sites: freelancer.com, guru.com, peopleperhour.com
 If you have more than one keyword, enter each of them in separate lines. Once you are done, press Enter key to begin the search.
 MLS
 
