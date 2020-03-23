@@ -28,9 +28,23 @@ peopleperhour = Scraper.new(keywords, 'peopleperhour')
 
 sleep(2)
 
+puts "Scraping freelancer.com...\n\n"
+sleep(1)
+puts "Please wait...\n"
 scrape_freelancer = freelancer.scrape
+puts "\n#{scrape_freelancer.count} jobs scraped\n\n\n"
+
+puts "Scraping guru.com...\n\n"
+sleep(1)
+puts "Please wait...\n"
 scrape_guru = guru.scrape
+puts "\n#{scrape_guru.count} jobs scraped\n\n\n"
+
+puts "Scraping peopleperhour.com...\n\n"
+sleep(1)
+puts "Please wait...\n"
 scrape_peopleperhour = peopleperhour.scrape
+puts "\n#{scrape_peopleperhour.count} jobs scraped\n\n\n"
 
 puts 'no job found in freelancing.com' if scrape_freelancer == 'no job found'
 puts 'no job found in guru.com' if scrape_guru == 'no job found'

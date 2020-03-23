@@ -9,17 +9,11 @@ class Scraper
   end
 
   def scrape
-    puts "Scraping #{@site}.com...\n\n"
-
     page = 1
     last_page = last_page(@site, parse_html(make_url(@site, 1)))
     return 'no job found' if last_page.zero?
 
-    puts "Found #{last_page} page(s)\n\n"
-
     while page <= last_page
-      puts "Scraping page #{page}"
-
       parsed_html = parse_html(make_url(@site, page))
 
       case @site
@@ -33,7 +27,7 @@ class Scraper
 
       page += 1
     end
-    puts "\n#{@jobs.count} jobs scraped\n\n\n"
+
     @jobs
   end
 
