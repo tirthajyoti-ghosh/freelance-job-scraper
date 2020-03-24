@@ -78,7 +78,7 @@ class Scraper
 
     per_page = job_listings.count.to_f
     last_page = (total / per_page).ceil.to_i
-    
+
     last_page
   end
 

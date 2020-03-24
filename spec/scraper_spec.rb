@@ -15,7 +15,7 @@ RSpec.describe Scraper do
   let(:parsed_html_freelancer) { Nokogiri::HTML(raw_html_freelancer) }
 
   let(:parsed_html_guru) { Nokogiri::HTML(raw_html_guru) }
-  
+
   let(:parsed_html_peopleperhour) { Nokogiri::HTML(raw_html_peopleperhour) }
 
   let(:scraper) { Scraper.new(%w[any keyword], 'any_site') }
@@ -37,7 +37,7 @@ RSpec.describe Scraper do
 
     it 'returns an array of hashes' do
       expect(scraper.send(:scrape_guru, parsed_html_guru)[0].class).to eql(Hash)
-    end  
+    end
   end
 
   describe '.scrape_peopleperhour' do
@@ -47,7 +47,7 @@ RSpec.describe Scraper do
 
     it 'returns an array of hashes' do
       expect(scraper.send(:scrape_peopleperhour, parsed_html_peopleperhour)[0].class).to eql(Hash)
-    end    
+    end
   end
 
   describe '.parse_keywords' do
