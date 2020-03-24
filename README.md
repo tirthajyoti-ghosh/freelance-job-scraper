@@ -44,7 +44,7 @@ Feel free to check out this [link](https://www.loom.com/share/7e4744e6ccd8486085
 1) Git clone this repo and cd the to the `freelance-job-scraper` directory.
 2) Install rspec with `gem install rspec`.
 3) Run `rspec` in Command Line.
-4) `7 examples, 0 failures` will be shown on the screen.
+4) `15 examples, 0 failures` will be shown on the screen.
 
 ## Author
 
