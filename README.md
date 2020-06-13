@@ -46,6 +46,11 @@ Feel free to check out this [link](https://www.loom.com/share/7e4744e6ccd8486085
 3) Run `rspec` in Command Line.
 4) `15 examples, 0 failures` will be shown on the screen.
 
+## Future releases
+- User can select which sites they want to scrape
+- Add more sites for scraping
+- User can specify how many jobs he/she wants to scrape
+
 ## Author
 
 👤 **Tirthajyoti Ghosh**
