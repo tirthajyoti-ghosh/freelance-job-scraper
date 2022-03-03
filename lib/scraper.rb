@@ -70,12 +70,12 @@ class Scraper
       job_listings = parsed_page.css('div.jobRecord')
       total = parsed_page.css('h2.secondaryHeading').text.split(' ')[0].gsub(',', '').to_f
     else
-      job_listings = parsed_page.css('div.job-items')[0].css('div.job-list-item')
-      total = parsed_page.css('span#job-listing-count').text.split(' ')[0].gsub(',', '').to_f
+      job_listings = parsed_page.css('#reactContainer > div > div.page-container > section > main > div > div.list⤍JobsList⤚2YMp7 > div > ul > li.list__item⤍List⤚2ytmm')
+      total = parsed_page.css('#reactContainer > div > div.page-container > section > main > div > div.header⤍JobsList⤚Zv8FI > h1 > span:nth-child(2)').text.split('—')[1].split(' ')[0].to_f
     end
 
     return 0 if job_listings.count.zero?
-
+    
     per_page = job_listings.count.to_f
     last_page = (total / per_page).ceil.to_i
 
@@ -134,18 +134,15 @@ class Scraper
   end
 
   def scrape_peopleperhour(parsed_html)
-    job_listings = parsed_html.css('div.job-items')[0].css('div.job-list-item')
+    job_listings = parsed_html.css('#reactContainer > div > div.page-container > section > main > div > div.list⤍JobsList⤚2YMp7 > div > ul > li.list__item⤍List⤚2ytmm')
 
     job_listings.each do |job_listing|
-      rate = job_listing.css('div.price-tag')
-      rate.css('small').remove
-      rate = rate.text.strip
       job = {
-        title: job_listing.css('h6.title').css('a').text.strip,
-        posted: job_listing.css('time.value').text.strip,
-        rate: rate,
-        proposals: job_listing.css('span.proposal-count').text,
-        url: job_listing.css('h6.title').css('a')[0].attributes['href'].value
+        title: job_listing.css('h6.item__title⤍ListItem⤚2FRMT > a').text.strip,
+        posted: job_listing.css('time.item__info-value⤍ListItem⤚1Kxws').text.strip,
+        rate: job_listing.css('div.item__budget⤍ListItem⤚3P7Zd').text.strip,
+        proposals: job_listing.css('div > div > div.item__container⤍ListItem⤚Fk4RX > div.pph-col-md-8.pph-col-xs-8 > ul > li:nth-child(3) > span').text,
+        url: job_listing.css('h6.item__title⤍ListItem⤚2FRMT > a')[0].attributes['href'].value
       }
 
       @jobs << job
