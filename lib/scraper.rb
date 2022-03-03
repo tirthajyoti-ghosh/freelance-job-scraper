@@ -13,11 +13,11 @@ class Scraper
     last_page = last_page(@site, parse_html(make_url(@site, 1)))
     return 'no job found' if last_page.zero?
 
-    puts "Total no. of pages: #{last_page}"
+    puts "Total no. of pages: #{last_page}\n\n"
 
     if last_page > 50
       last_page = 50
-      puts "Total no. of pages exceeds limit of 50.\nScraping first 50 pages..."
+      puts "Total no. of pages exceeds limit of 50.\nScraping first 50 pages...\n\n"
     end
 
     while page <= last_page
