@@ -39,7 +39,7 @@ Feel free to check out this [link](https://www.loom.com/share/7e4744e6ccd8486085
 2) Run `bundle install` in command line to install Nokogiri and HTTParty Gem.
 3) Run `ruby bin/main.rb`.
 4) Input keywords in separate lines. Press enter key on a new line to begim the search.
-5) Tada! 'freelance.com-jobs.csv', 'guru.com-jobs.csv', and 'peopleperhour.com-jobs.csv' would be created at the root directory respectively :)
+5) Tada! 'freelancer.com-jobs.csv', 'guru.com-jobs.csv', and 'peopleperhour.com-jobs.csv' would be created at the root directory respectively :)
 
 ## Run tests
 
